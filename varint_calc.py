@@ -52,12 +52,13 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(self.main_window)
 
     def decode_varint(self):
-        entered_value = self.varint_entry.text()
-        entered_value = bytes.fromhex(entered_value)
-        shift = 0
-        offset = 0
-        value = 0
         try:
+            entered_value = self.varint_entry.text()
+            entered_value = bytes.fromhex(entered_value)
+            shift = 0
+            offset = 0
+            value = 0
+
             while True:
                 byte = entered_value[offset]  # Read a byte at the current offset
                 offset += 1  # Increment the offset for the next byte
@@ -72,6 +73,15 @@ class MainWindow(QMainWindow):
             self.display_value.setText("enter something...")
         except ValueError:
             self.display_value.setText("0-9a-f only please...")
+        
+    def encode_varint(self):
+        value = self.varint_entry.text()
+        varint = []
+        while value >= 0x80:  # Continue while there are more chunks to encode
+            varint.append((value & 0x7F) | 0x80)  # Add the lower 7 bits + MSB set to 1
+            value >>= 7  # Shift right by 7 bits
+        varint.append(value & 0x7F)  # Add the last chunk with MSB set to 0
+        print(bytes(varint))  # Convert to byte format
 
 app = QApplication(sys.argv)
 window = MainWindow()
