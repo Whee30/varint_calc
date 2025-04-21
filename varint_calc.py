@@ -54,19 +54,18 @@ class MainWindow(QMainWindow):
     def decode_varint(self):
         try:
             entered_value = self.varint_entry.text()
+            print(entered_value)
             entered_value = bytes.fromhex(entered_value)
+            print(entered_value)
             shift = 0
             offset = 0
             value = 0
-
-            while True:
-                byte = entered_value[offset]  # Read a byte at the current offset
-                offset += 1  # Increment the offset for the next byte
-
-                value |= (byte & 0x7F) << shift  # Mask the MSB and shift bits into place
-                shift += 7  # Move to the next group of bits
-
-                if (byte & 0x80) == 0:  # If MSB is 0, end of varint
+            while offset < len(entered_value):  # Ensure offset stays in bounds
+                byte = entered_value[offset]
+                offset += 1
+                value |= (byte & 0x7F) << shift
+                shift += 7
+                if (byte & 0x80) == 0:  # Stop if MSB is 0
                     break
             self.display_value.setText(str(value))
         except IndexError:
@@ -88,3 +87,22 @@ window = MainWindow()
 window.show()
 app.setStyle('Fusion')
 app.exec()
+
+
+
+
+# def encode_varint(value):
+#     encoded_bytes = []
+#     while True:
+#         byte = value & 0x7F  # Take the lowest 7 bits
+#         value >>= 7  # Shift right by 7 bits
+
+#         if value:  # If there are more bits left, set the MSB
+#             byte |= 0x80
+        
+#         encoded_bytes.append(byte)
+
+#         if not value:  # Stop when all bits are processed
+#             break
+
+#     return bytes(encoded_bytes)  # Return as a byte array
