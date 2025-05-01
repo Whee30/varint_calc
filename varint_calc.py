@@ -94,9 +94,7 @@ class MainWindow(QMainWindow):
         else:
             try:
                 entered_value = self.varint_entry.text().replace(" ","")
-                print(entered_value)
                 entered_value = bytes.fromhex(entered_value)
-                print(entered_value)
                 shift = 0
                 offset = 0
                 value = 0
